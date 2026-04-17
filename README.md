@@ -46,6 +46,8 @@ GEMINI_API_KEY=your_gemini_api_key
 
 ### 3. Run Backend Server
 ```bash
+python scraper.py
+python extractor.py
 python -m uvicorn api:app --reload
 ```
 
