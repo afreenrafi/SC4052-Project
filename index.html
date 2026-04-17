@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bloom Narrative Intelligence Service</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #f8f7fb;
+      --surface: #ffffff;
+      --surface-2: #f3f0fa;
+      --card: #ffffff;
+      --border: #e7dff1;
+      --text: #241f31;
+      --muted: #6c6480;
+      --primary: #b06ab3;
+      --primary-2: #8e7dff;
+      --accent: #f6ddff;
+      --shadow: 0 10px 30px rgba(58, 42, 89, 0.08);
+
+      --font-body: "Inter", sans-serif;
+      --font-heading: "Poppins", sans-serif;
+
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --transition: 0.25s ease;
+    }
+
+    body.dark {
+      --bg: #14111a;
+      --surface: #1b1624;
+      --surface-2: #241d31;
+      --card: #1e1829;
+      --border: #342b46;
+      --text: #f5f2fb;
+      --muted: #b3aac8;
+      --primary: #f3a6d6;
+      --primary-2: #a99cff;
+      --accent: #312445;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: linear-gradient(180deg, var(--bg) 0%, var(--surface-2) 100%);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      padding: 22px 0;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+      background: color-mix(in srgb, var(--bg) 84%, transparent);
+      border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 700;
+      font-family: var(--font-heading);
+      box-shadow: var(--shadow);
+    }
+
+    .brand-copy h1 {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      line-height: 1.1;
+    }
+
+    .brand-copy p {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 3px;
+    }
+
+    .theme-toggle {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 0.92rem;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--primary);
+    }
+
+    .hero {
+      padding: 28px 0 20px;
+    }
+
+    .hero-card,
+    .panel,
+    .mascot-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      padding: 18px 24px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      color: var(--primary);
+      padding: 8px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .hero-card h2 {
+      font-family: var(--font-heading);
+      font-size: 1.65rem;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .hero-card p {
+      font-size: 0.98rem;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 78ch;
+    }
+
+    .sections {
+      padding: 0 0 48px;
+    }
+
+    .main-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .left-panel,
+    .right-panel {
+      min-width: 0;
+    }
+
+    .right-panel {
+      position: sticky;
+      top: 100px;
+    }
+
+    .panel {
+      overflow: hidden;
+    }
+
+    .panel-head {
+      padding: 22px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .panel-head-left h3 {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+
+    .panel-head-left p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .panel-body {
+      padding: 24px;
+    }
+
+    .subtabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .subtab {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .subtab.active {
+      background: color-mix(in srgb, var(--primary) 14%, var(--surface));
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .subpanel {
+      display: none;
+    }
+
+    .subpanel.active {
+      display: block;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface);
+      color: var(--text);
+      padding: 14px 15px;
+      font-size: 0.96rem;
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      font-family: var(--font-body);
+    }
+
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    input[type="text"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 16%, transparent);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-size: 0.86rem;
+      cursor: pointer;
+      transition: all var(--transition);
+      user-select: none;
+    }
+
+    .chip:hover {
+      border-color: var(--primary);
+    }
+
+    .chip.selected {
+      background: color-mix(in srgb, var(--primary) 16%, var(--surface));
+      border-color: var(--primary);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 14px;
+      padding: 13px 18px;
+      font-size: 0.94rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform var(--transition), opacity var(--transition), background var(--transition);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: white;
+    }
+
+    .btn-secondary {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .loading {
+      color: var(--muted);
+      padding: 18px 0;
+      font-size: 0.95rem;
+    }
+
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin: 6px 0 18px;
+      flex-wrap: wrap;
+    }
+
+    .results-header h4 {
+      font-family: var(--font-heading);
+      font-size: 1.08rem;
+    }
+
+    .results-count {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .source-card {
+      background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 10%, var(--surface)), var(--surface));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .source-card .label {
+      color: var(--primary);
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .source-card h3 {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      margin-bottom: 10px;
+    }
+
+    .drama-card {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 14px;
+      transition: border-color var(--transition), transform var(--transition);
+    }
+
+    .drama-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .card-layout {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .card-poster {
+      width: 150px;
+      aspect-ratio: 2 / 3;
+      object-fit: cover;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+    }
+
+    .fallback-poster {
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .card-main {
+      min-width: 0;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 1.06rem;
+      line-height: 1.35;
+    }
+
+    .card-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .badge {
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      white-space: nowrap;
+    }
+
+    .badge-country { color: var(--primary-2); }
+    .badge-score { color: #c5922b; }
+    .badge-sim { color: var(--primary); }
+
+    .couple-line {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .couple-line strong {
+      color: var(--text);
+    }
+
+    .card-synopsis {
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.65;
+      margin-bottom: 14px;
+    }
+
+    .card-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .feature-tag {
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.76rem;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+    }
+
+    .feature-tag.trope { color: var(--primary); }
+    .feature-tag.tone { color: var(--primary-2); }
+    .feature-tag.plain { color: var(--muted); }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .card-eps {
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .feedback-btns {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .fb-label {
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .fb-btn {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 10px;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .fb-btn.voted {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .error-msg {
+      margin-top: 12px;
+      border: 1px solid #e5a2b0;
+      background: #fff0f3;
+      color: #b03d59;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 0.92rem;
+    }
+
+    body.dark .error-msg {
+      background: #341d28;
+      border-color: #704053;
+      color: #ffb7c9;
+    }
+
+    .empty {
+      color: var(--muted);
+      text-align: center;
+      padding: 30px 0;
+    }
+
+    .browse-search {
+      margin-bottom: 16px;
+    }
+
+    .mascot-card {
+      padding: 20px;
+      min-height: 420px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .mascot-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .mascot-stage {
+      min-height: 180px;
+      border-radius: 20px;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(255, 140, 200, 0.18), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(120, 150, 255, 0.15), transparent 40%),
+        linear-gradient(135deg, #2a1f3d, #1e1630);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 18px;
+      overflow: hidden;
+      position: relative;
+      background-size: 200% 200%;
+      animation: bgShift 8s ease infinite alternate;
+    }
+
+    .mascot-stage::after {
+      content: "";
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      background: radial-gradient(circle, rgba(255,150,200,0.25), transparent 70%);
+      filter: blur(20px);
+      z-index: 0;
+    }
+
+    .mascot-img {
+      max-width: 220px;
+      width: 100%;
+      height: auto;
+      animation: floaty 3s ease-in-out infinite;
+      transition: transform 0.2s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mascot-img:hover {
+      transform: scale(1.05);
+    }
+
+    .assistant-box {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 16px;
+      border-left: 4px solid var(--primary);
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
+    }
+
+    .assistant-name {
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+      color: var(--primary);
+    }
+
+    .assistant-message {
+      font-size: 0.92rem;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .assistant-input {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .assistant-input input {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface);
+      color: var(--text);
+      padding: 12px 14px;
+      font-size: 0.92rem;
+      outline: none;
+    }
+
+    .assistant-input input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 16%, transparent);
+    }
+
+    .assistant-input button {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: white;
+      cursor: pointer;
+    }
+
+    .assistant-input button:hover {
+      opacity: 0.95;
+    }
+
+    .mascot-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .footer {
+      padding: 28px 0 42px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      text-align: center;
+    }
+
+    @keyframes floaty {
+      0%, 100% { translate: 0 0; }
+      50% { translate: 0 -10px; }
+    }
+
+    @keyframes bgShift {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+
+    @media (max-width: 980px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .right-panel {
+        position: static;
+      }
+
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .hero-card,
+      .mascot-card,
+      .panel-body {
+        padding: 20px;
+      }
+
+      .panel-head {
+        padding: 18px 20px 14px;
+      }
+
+      .card-top {
+        flex-direction: column;
+      }
+
+      .card-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .card-poster {
+        width: 100%;
+        max-width: 180px;
+      }
+
+      .assistant-input {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <div class="brand-mark">B</div>
+        <div class="brand-copy">
+          <h1>Bloom</h1>
+          <p>Narrative Intelligence-as-a-Service</p>
+        </div>
+      </div>
+
+      <button class="theme-toggle" id="themeToggle">🌙 Dark mode</button>
+    </div>
+  </div>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-card">
+        <div class="hero-badge">A Narrative Matchmaking Service</div>
+        <h2>Discover Thai Series by mood, structure and story feel.</h2>
+        <p>
+          Bloom turns raw story descriptions into searchable narrative signals such as trope,
+          tone, pacing and setting. Explore titles by emotional preference and narrative similarity
+          and find what you truly need at the moment.
+        </p>
+      </div>
+    </section>
+
+    <section class="sections">
+      <div class="main-layout">
+        <div class="left-panel">
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-head-left">
+                <h3>Start exploring</h3>
+                <p>Begin with mood-based discovery, then switch to title matching or library browsing.</p>
+              </div>
+
+              <div class="subtabs">
+                <button class="subtab active" onclick="switchSubtab('mood')">Discover by mood</button>
+                <button class="subtab" onclick="switchSubtab('title')">Find similar by title</button>
+                <button class="subtab" onclick="switchSubtab('custom')">Analyze custom story</button>
+                <button class="subtab" onclick="switchSubtab('browse')">Browse library</button>
+              </div>
+            </div>
+
+            <div class="panel-body">
+              <div id="subpanel-mood" class="subpanel active">
+                <div class="actions">
+                  <button class="btn btn-primary" onclick="getByPrefs()">✨ Find dramas</button>
+                  <button class="btn btn-secondary" onclick="clearSelections()">Clear</button>
+                </div>
+
+                <div class="grid-2">
+                  <div class="field full">
+                    <label>Tropes</label>
+                    <div class="chips">
+                      <span class="chip" data-group="tropes">enemies-to-lovers</span>
+                      <span class="chip" data-group="tropes">slow burn</span>
+                      <span class="chip" data-group="tropes">fake relationship</span>
+                      <span class="chip" data-group="tropes">forced proximity</span>
+                      <span class="chip" data-group="tropes">second chance</span>
+                      <span class="chip" data-group="tropes">childhood friends</span>
+                      <span class="chip" data-group="tropes">bodyguard</span>
+                      <span class="chip" data-group="tropes">hurt/comfort</span>
+                      <span class="chip" data-group="tropes">unrequited love</span>
+                      <span class="chip" data-group="tropes">found family</span>
+                    </div>
+                  </div>
+
+                  <div class="field full">
+                    <label>Emotional tone</label>
+                    <div class="chips">
+                      <span class="chip" data-group="tone">fluffy</span>
+                      <span class="chip" data-group="tone">angsty</span>
+                      <span class="chip" data-group="tone">bittersweet</span>
+                      <span class="chip" data-group="tone">humorous</span>
+                      <span class="chip" data-group="tone">dark</span>
+                      <span class="chip" data-group="tone">heartwarming</span>
+                      <span class="chip" data-group="tone">tense</span>
+                      <span class="chip" data-group="tone">melancholic</span>
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label for="setting-sel">Setting</label>
+                    <select id="setting-sel">
+                      <option value="">Any setting</option>
+                      <option value="school">School / University</option>
+                      <option value="workplace">Workplace</option>
+                      <option value="crime/mafia">Crime / Mafia</option>
+                      <option value="supernatural">Supernatural</option>
+                      <option value="slice of life">Slice of Life</option>
+                      <option value="historical">Historical</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label>Angst level</label>
+                    <div class="chips">
+                      <span class="chip" data-group="angst">low</span>
+                      <span class="chip" data-group="angst">medium</span>
+                      <span class="chip" data-group="angst">high</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="prefs-result"></div>
+              </div>
+
+              <div id="subpanel-title" class="subpanel">
+                <div class="field">
+                  <label for="title-input">Drama title</label>
+                  <input
+                    type="text"
+                    id="title-input"
+                    placeholder="e.g. Only Boo!, Bad Buddy, My School President…"
+                    onkeydown="if(event.key==='Enter') getByTitle()"
+                  />
+                </div>
+
+                <div class="actions">
+                  <button class="btn btn-primary" onclick="getByTitle()">Find similar dramas</button>
+                </div>
+
+                <div id="title-result"></div>
+              </div>
+
+              <div id="subpanel-custom" class="subpanel">
+                <div class="field">
+                  <label for="custom-text-input">Paste a synopsis or describe the vibe you want</label>
+                  <textarea
+                    id="custom-text-input"
+                    placeholder="e.g. A soft university romance with rivals-to-lovers energy, medium angst, bittersweet tone..."
+                  ></textarea>
+                </div>
+
+                <div class="actions">
+                  <button class="btn btn-primary" onclick="analyzeCustomStory()">Analyze + Recommend</button>
+                </div>
+
+                <div id="custom-result"></div>
+              </div>
+
+              <div id="subpanel-browse" class="subpanel">
+                <div class="field browse-search">
+                  <label for="browse-search">Search library</label>
+                  <input
+                    type="text"
+                    id="browse-search"
+                    placeholder="Search by title…"
+                    oninput="browseFilter()"
+                  />
+                </div>
+
+                <div id="browse-result">
+                  <div class="loading">Loading library…</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="right-panel">
+          <div class="mascot-card">
+            <div>
+              <div class="mascot-label">Bloom Assistant</div>
+
+              <div class="mascot-stage" id="mascotStage">
+                <img src="nong_noong.png" alt="Nong Noong" class="mascot-img">
+              </div>
+
+              <div class="assistant-box">
+                <div class="assistant-name">Bloom</div>
+                <div class="assistant-message" id="assistantMessage">
+                  Hi! I’m Nong Noong 🌸 Pick a mood to start or search for a drama you already love.
+                </div>
+              </div>
+
+              <div class="assistant-input">
+                <input type="text" id="assistantInput" placeholder="Ask Nong Noong something... e.g. I want something sad but cute" />
+                <button type="button" id="assistantSendBtn">Send</button>
+              </div>
+            </div>
+
+            <p class="mascot-note">
+              Nong Noong reacts to your choices and helps you explore Thai Series by mood, tone and narrative style.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      Bloom · Narrative Intelligence-as-a-Service · NTU Cloud Computing 2026
+    </div>
+  </main>
+
+  <script>
+    const API = "http://localhost:8000";
+
+    function setAssistantMessage(text) {
+      const box = document.getElementById("assistantMessage");
+      if (box) box.textContent = text;
+    }
+
+    function smartAssistantResponse(type, data = {}) {
+      if (type === "mood") {
+        const tropes = data.tropes || [];
+        const tones = data.tones || [];
+        const angst = data.angst || "";
+        const setting = data.setting || "";
+
+        if (!tropes.length && !tones.length && !angst && !setting) {
+          return "Tell me how you feel first 🌸 Do you want something fluffy, angsty, dark or heartwarming?";
+        }
+
+        let parts = [];
+        if (tones.length) parts.push(tones.join(", "));
+        if (tropes.length) parts.push(tropes.join(", "));
+        if (angst) parts.push(`${angst} angst`);
+        if (setting) parts.push(`${setting} setting`);
+
+        return `Hmm… ${parts.join(" + ")}. That’s a pretty specific vibe. Let me match stories with that emotional profile.`;
+      }
+
+      if (type === "results") {
+        const count = data.count || 0;
+        const topTitle = data.topTitle || "";
+        if (topTitle) {
+          return `I found ${count} matches! "${topTitle}" looks like your strongest fit right now 💫`;
+        }
+        return `I found ${count} matches. Try refining your tone, trope or setting if you want something more specific.`;
+      }
+
+      if (type === "title") {
+        return `Let me break down "${data.title}" and find similar narratives based on tone, trope, pacing and setting…`;
+      }
+
+      if (type === "feedback_good") {
+        return "Nice! I’ll treat that as a strong recommendation signal 💖";
+      }
+
+      if (type === "feedback_bad") {
+        return "Got it! that one missed the vibe :( I’ll use that as a weak match signal next time.";
+      }
+
+      return "I’m here to help you find your perfect story 🌸";
+    }
+
+    function selectChipByText(group, values) {
+      document.querySelectorAll(`.chip[data-group="${group}"]`).forEach(chip => {
+        const chipText = chip.textContent.trim().toLowerCase();
+        if (values.includes(chipText)) {
+          chip.classList.add("selected");
+        }
+      });
+    }
+
+    async function handleAssistantInput() {
+      const inputEl = document.getElementById("assistantInput");
+      if (!inputEl) return;
+
+      const raw = inputEl.value.trim();
+      if (!raw) {
+        setAssistantMessage("Ask me for a vibe — like fluffy, sad, enemies-to-lovers, or school romance.");
+        return;
+      }
+
+      const customBox = document.getElementById("custom-text-input");
+      if (customBox) {
+        customBox.value = raw;
+      }
+
+      switchSubtab("custom");
+      setAssistantMessage("Got it! I’m sending your description for full narrative analysis now 💫");
+      await analyzeCustomStory();
+      inputEl.value = "";
+    }
+
+    function getSelected(group) {
+      return [...document.querySelectorAll(`.chip[data-group="${group}"].selected`)]
+        .map(c => c.textContent.trim().toLowerCase());
+    }
+
+    function switchSubtab(name) {
+      const names = ["mood", "title", "custom", "browse"];
+      document.querySelectorAll(".subtab").forEach((btn, i) => {
+        btn.classList.toggle("active", names[i] === name);
+      });
+
+      document.querySelectorAll(".subpanel").forEach(panel => panel.classList.remove("active"));
+      document.getElementById("subpanel-" + name).classList.add("active");
+
+      if (name === "browse") loadBrowse();
+
+      if (name === "mood") {
+        setAssistantMessage("Start with how you want the story to feel. Mood-based discovery works best when you’re not sure what title to search.");
+      } else if (name === "title") {
+        setAssistantMessage("Already have a favourite drama? Enter it here and I’ll find titles with similar narrative features.");
+      } else if (name === "custom") {
+        setAssistantMessage("Paste any synopsis or describe your ideal story vibe. I’ll analyze it and return both curated local matches and live catalog matches.");
+      } else if (name === "browse") {
+        setAssistantMessage("Browsing is great if you want to explore the whole library before narrowing by mood or similarity.");
+      }
+    }
+
+    document.querySelectorAll(".chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        if (chip.dataset.group === "angst") {
+          document.querySelectorAll('.chip[data-group="angst"]').forEach(c => c.classList.remove("selected"));
+        }
+        chip.classList.toggle("selected");
+
+        setAssistantMessage(
+          smartAssistantResponse("mood", {
+            tropes: getSelected("tropes"),
+            tones: getSelected("tone"),
+            angst: getSelected("angst")[0] || "",
+            setting: document.getElementById("setting-sel")?.value || ""
+          })
+        );
+      });
+    });
+
+    document.getElementById("setting-sel")?.addEventListener("change", () => {
+      setAssistantMessage(
+        smartAssistantResponse("mood", {
+          tropes: getSelected("tropes"),
+          tones: getSelected("tone"),
+          angst: getSelected("angst")[0] || "",
+          setting: document.getElementById("setting-sel")?.value || ""
+        })
+      );
+    });
+
+    function clearSelections() {
+      document.querySelectorAll(".chip.selected").forEach(c => c.classList.remove("selected"));
+      document.getElementById("setting-sel").value = "";
+      document.getElementById("prefs-result").innerHTML = "";
+      setAssistantMessage("Filters cleared. Tell me a new vibe and I’ll help shape it into something more precise.");
+    }
+
+    function tags(features = {}) {
+      let html = "";
+      (features.tropes || []).slice(0, 4).forEach(t => html += `<span class="feature-tag trope">${t}</span>`);
+      (features.emotional_tone || []).slice(0, 2).forEach(t => html += `<span class="feature-tag tone">${t}</span>`);
+      if (features.pacing) html += `<span class="feature-tag plain">${features.pacing}</span>`;
+      if (features.setting) html += `<span class="feature-tag plain">${features.setting}</span>`;
+      return html;
+    }
+
+    function card(d, source = null) {
+      const sim = d.similarity_score != null ? `<span class="badge badge-sim">${Math.round(d.similarity_score * 100)}% match</span>` : "";
+      const rating = d.rating ? `<span class="badge badge-score">★ ${d.rating}</span>` : "";
+      const country = d.country ? `<span class="badge badge-country">${d.country}</span>` : "";
+      const eps = d.episodes ? `${d.episodes} ep · ${d.year || ""}` : (d.year ? `${d.year}` : "");
+
+      const posterSrc = d.poster
+        ? (d.poster.startsWith("http") ? d.poster : `${API}/${d.poster}`)
+        : "";
+
+      const poster = posterSrc
+        ? `<img src="${posterSrc}" alt="${d.title} poster" class="card-poster" onerror="this.style.display='none'; this.insertAdjacentHTML('afterend','<div class=&quot;card-poster fallback-poster&quot;>No image</div>');">`
+        : `<div class="card-poster fallback-poster">No image</div>`;
+
+      const couple = d.main_couple
+        ? `<div class="couple-line"><strong>Main couple:</strong> ${d.main_couple}</div>`
+        : "";
+
+      const feedback = source ? `
+        <div class="feedback-btns">
+          <span class="fb-label">helpful?</span>
+          <button class="fb-btn" onclick="vote('${source}','${d.title}',true,this)">👍</button>
+          <button class="fb-btn" onclick="vote('${source}','${d.title}',false,this)">👎</button>
+        </div>` : "";
+
+      return `
+        <div class="drama-card">
+          <div class="card-layout">
+            ${poster}
+            <div class="card-main">
+              <div class="card-top">
+                <div class="card-title">${d.title}</div>
+                <div class="card-meta">${sim}${rating}${country}</div>
+              </div>
+              ${couple}
+              <p class="card-synopsis">${d.synopsis || ""}</p>
+              <div class="card-features">${tags(d.features)}</div>
+              <div class="card-footer">
+                <span class="card-eps">${eps}</span>
+                ${feedback}
+              </div>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function showError(containerId, msg) {
+      document.getElementById(containerId).innerHTML = `<div class="error-msg">⚠ ${msg}</div>`;
+    }
+
+    async function getByTitle() {
+      const title = document.getElementById("title-input").value.trim();
+      if (!title) return;
+
+      setAssistantMessage(smartAssistantResponse("title", { title }));
+      const el = document.getElementById("title-result");
+      el.innerHTML = `<div class="loading">Finding similar dramas…</div>`;
+
+      try {
+        const res = await fetch(`${API}/recommend/by-title`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, top_n: 6 }),
+        });
+
+        if (!res.ok) throw new Error((await res.json()).detail);
+
+        const data = await res.json();
+        const src = data.source_item;
+
+        setAssistantMessage(
+          smartAssistantResponse("results", {
+            count: data.recommendations.length,
+            topTitle: data.recommendations[0]?.title || ""
+          })
+        );
+
+        let html = `
+          <div class="source-card">
+            <div class="label">Because you selected</div>
+            <h3>${src.title}</h3>
+            <div class="card-features">${tags(src.features)}</div>
+          </div>
+          <div class="results-header">
+            <h4>Similar narrative matches</h4>
+            <span class="results-count">${data.recommendations.length} results</span>
+          </div>`;
+
+        data.recommendations.forEach(d => html += card(d, src.title));
+        el.innerHTML = html;
+      } catch (e) {
+        showError("title-result", e.message);
+      }
+    }
+
+    async function getByPrefs() {
+      const el = document.getElementById("prefs-result");
+      el.innerHTML = `<div class="loading">Matching your selected mood and narrative features…</div>`;
+
+      setAssistantMessage(
+        smartAssistantResponse("mood", {
+          tropes: getSelected("tropes"),
+          tones: getSelected("tone"),
+          angst: getSelected("angst")[0] || "",
+          setting: document.getElementById("setting-sel").value
+        })
+      );
+
+      try {
+        const res = await fetch(`${API}/recommend/by-features`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            tropes: getSelected("tropes"),
+            emotional_tone: getSelected("tone"),
+            angst_level: getSelected("angst")[0] || "",
+            setting: document.getElementById("setting-sel").value,
+            top_n: 6
+          }),
+        });
+
+        if (!res.ok) throw new Error((await res.json()).detail);
+
+        const data = await res.json();
+
+        setAssistantMessage(
+          smartAssistantResponse("results", {
+            count: data.recommendations.length,
+            topTitle: data.recommendations[0]?.title || ""
+          })
+        );
+
+        let html = `
+          <div class="results-header">
+            <h4>Dramas that match your mood</h4>
+            <span class="results-count">${data.recommendations.length} results</span>
+          </div>`;
+
+        data.recommendations.forEach(d => html += card(d));
+        el.innerHTML = html;
+      } catch (e) {
+        showError("prefs-result", e.message);
+      }
+    }
+
+    let allDramas = [];
+
+    async function loadBrowse() {
+      if (allDramas.length) {
+        renderBrowse(allDramas);
+        setAssistantMessage("The library is loaded. You can browse everything here, or switch back to mood discovery for more targeted results.");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API}/items`);
+        const data = await res.json();
+        allDramas = data.items;
+        renderBrowse(allDramas);
+        setAssistantMessage("The library is loaded. You can browse everything here, or switch back to mood discovery for more targeted results.");
+      } catch (e) {
+        document.getElementById("browse-result").innerHTML =
+          `<div class="error-msg">⚠ Could not load the library. Is the API running?</div>`;
+      }
+    }
+
+    function browseFilter() {
+      const q = document.getElementById("browse-search").value.toLowerCase();
+      renderBrowse(allDramas.filter(d => d.title.toLowerCase().includes(q)));
+    }
+
+    function renderBrowse(dramas) {
+      const el = document.getElementById("browse-result");
+      if (!dramas.length) {
+        el.innerHTML = `<div class="empty">No dramas found.</div>`;
+        return;
+      }
+      el.innerHTML = dramas.map(d => card(d)).join("");
+    }
+
+    async function analyzeCustomStory() {
+      const text = document.getElementById("custom-text-input").value.trim();
+      const el = document.getElementById("custom-result");
+
+      if (!text) return;
+
+      el.innerHTML = `<div class="loading">Analyzing your story description…</div>`;
+      setAssistantMessage("I’m extracting narrative signals from your custom text and checking both curated and live catalogs.");
+
+      try {
+        const res = await fetch(`${API}/recommend/hybrid`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text,
+            top_n: 6
+          }),
+        });
+
+        if (!res.ok) throw new Error((await res.json()).detail);
+
+        const data = await res.json();
+        const features = data.extracted_features || {};
+        const localResults = data.local_results || [];
+        const liveResults = data.live_results || [];
+
+        let html = `
+          <div class="source-card">
+            <div class="label">Narrative analysis</div>
+            <h3>${data.source === "gemini" ? "Gemini-powered extraction" : "Local fallback extraction"}</h3>
+            <div class="card-features">${tags(features)}</div>
+          </div>
+        `;
+
+        if (localResults.length) {
+          html += `
+            <div class="results-header">
+              <h4>Curated Thai BL matches</h4>
+              <span class="results-count">${localResults.length} results</span>
+            </div>
+          `;
+          localResults.forEach(d => html += card(d));
+        }
+
+        if (liveResults.length) {
+          html += `
+            <div class="results-header" style="margin-top: 22px;">
+              <h4>Live catalog matches</h4>
+              <span class="results-count">${liveResults.length} results</span>
+            </div>
+          `;
+          liveResults.forEach(d => html += card(d));
+        }
+
+        if (!localResults.length && !liveResults.length) {
+          html += `<div class="empty">No strong matches found yet.</div>`;
+        }
+
+        el.innerHTML = html;
+
+        const topLocal = localResults[0]?.title;
+        const topLive = liveResults[0]?.title;
+
+        if (topLocal && topLive) {
+          setAssistantMessage(`I found both curated and live matches. "${topLocal}" is your best local fit, and "${topLive}" is a strong live-catalog match.`);
+        } else if (topLocal) {
+          setAssistantMessage(`Your best curated match looks like "${topLocal}".`);
+        } else if (topLive) {
+          setAssistantMessage(`Your strongest live-catalog match looks like "${topLive}".`);
+        } else {
+          setAssistantMessage("I analyzed your text, but the match strength is still weak. Try being more specific about tone, trope, or setting.");
+        }
+      } catch (e) {
+        el.innerHTML = `<div class="error-msg">⚠ ${e.message}</div>`;
+      }
+    }
+
+    async function vote(source, recommended, helpful, btn) {
+      await fetch(`${API}/feedback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          source_title: source,
+          recommended_title: recommended,
+          helpful
+        }),
+      }).catch(() => {});
+
+      btn.closest(".drama-card").querySelectorAll(".fb-btn").forEach(b => b.classList.remove("voted"));
+      btn.classList.add("voted");
+
+      setAssistantMessage(
+        helpful
+          ? smartAssistantResponse("feedback_good")
+          : smartAssistantResponse("feedback_bad")
+      );
+    }
+
+    document.getElementById("assistantSendBtn")?.addEventListener("click", handleAssistantInput);
+    document.getElementById("assistantInput")?.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleAssistantInput();
+    });
+
+    const themeToggle = document.getElementById("themeToggle");
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      themeToggle.textContent = document.body.classList.contains("dark") ? "☀️ Light mode" : "🌙 Dark mode";
+    });
+  </script>
+</body>
+</html>
